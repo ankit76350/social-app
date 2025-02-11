@@ -1,0 +1,28 @@
+login with github
+
+database
+supa-social-app
+Password:
+R#g6ktnXaTgBp#u
+
+
+//some fuction is created to do something
+-- Create function
+CREATE FUNCTION public.handle_new_user()
+RETURNS TRIGGER 
+LANGUAGE plpgsql 
+SECURITY DEFINER SET search_path = public 
+AS $$
+BEGIN
+    INSERT INTO public.users (id, name) 
+    VALUES (NEW.id, NEW.raw_user_meta_data->>'name'); 
+    RETURN NEW; 
+END;
+$$;
+
+
+-- Create trigger
+CREATE TRIGGER createAuthUser 
+AFTER INSERT ON auth.users 
+FOR EACH ROW 
+EXECUTE procedure public.handle_new_user();
