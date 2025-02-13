@@ -10,7 +10,6 @@ import RenderHtml from 'react-native-render-html';
 import { Image } from 'react-native'
 import { downloadFile, getSupabaseFileUrl } from '../services/imageService'
 import { Video } from 'expo-av'
-import { TouchableOpacityBase } from 'react-native'
 import { createPostLike, removePostLike } from '../services/postService'
 import * as FileSystem from 'expo-file-system';
 import Loading from '../components/Loading'
@@ -35,8 +34,9 @@ const PostCard = ({
     item,
     currentUser,
     router,
-    hashShadow = true
-}) => {
+    hashShadow = true,
+    showMoreIcon = true,
+}) => { 
     const shadowStyles = {
         shadowColor: "#000", // Required for iOS
         shadowOffset: {
@@ -55,7 +55,10 @@ const PostCard = ({
     }, [])
 
     const openPostDetails = () => {
-        //later
+        if(!showMoreIcon) return null;
+        console.log("post Details");
+        router.push({pathname: '(main)/PostDetails' , params:{postId: item?.id}})
+        
     }
 
     const onLikes = async () => {
@@ -99,6 +102,8 @@ const PostCard = ({
 
 
 
+    console.log("Post item comments (PostCard Page):", item?.comments);
+    
 
 
 
@@ -123,14 +128,14 @@ const PostCard = ({
                 </View>
 
                 {/* Options Button */}
-                <TouchableOpacity onPress={openPostDetails}>
+                {showMoreIcon && <TouchableOpacity onPress={openPostDetails}>
                     <Icon
                         name="threeDotsHorizontal"
                         size={hp(3.4)}
                         strokeWidth={3}
                         color={theme.colors.text}
                     />
-                </TouchableOpacity>
+                </TouchableOpacity>}
             </View>
 
 
@@ -181,15 +186,15 @@ const PostCard = ({
                     </TouchableOpacity>
                     <Text style={styles.count}>{likes?.length}</Text>
                 </View>
-                <View style={styles.footerButton}>
-                    <TouchableOpacity >
+                <View style={styles.footerButton} >
+                    <TouchableOpacity onPress={openPostDetails}>
                         <Icon
                             name="comment"
                             size={24}
                             color={theme.colors.textLight}
                         />
                     </TouchableOpacity>
-                    <Text style={styles.count}>{0}</Text>
+                    <Text style={styles.count}>{item?.comments[0].count}</Text>
                 </View>
                 <View style={styles.footerButton}>
                     {
