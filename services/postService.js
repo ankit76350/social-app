@@ -34,3 +34,69 @@ export const createOrUpdatePost = async (post) => {
     return { success: false, msg: "Could not create your post" };
   }
 };
+
+export const fetchPosts = async (limit=10) => {
+  try {
+    
+    const { data, error } = await supabase
+    .from('posts')
+    .select(`
+      *,
+      user:users(id, name, image),
+      postLikes (*)
+    `)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  
+
+    if (error) {
+      console.log("Could not fetch post (Post servive file):", error);
+      return { success: false, msg: "Could not fetch post" };
+    }
+
+    return { success: true, data: data };
+  } catch (error) {
+    console.log("Could not fetch post (Post servive file):", error);
+    return { success: false, msg: "Could not fetch post" };
+  }
+};
+
+export const createPostLike = async (postLike) => {
+  try {
+    
+   
+    const {data ,error} = await supabase.from('postLikes').insert(postLike).select().single()
+
+    if (error) {
+      console.log("post like error (Post servive file):", error);
+      return { success: false, msg: "Could not like the post" };
+    }
+
+    return { success: true , data: data };
+  } catch (error) {
+    console.log("post like error (Post servive file):", error);
+    return { success: false, msg: "Could not like the post" };
+  }
+};
+
+
+export const removePostLike = async (postId , userId) => {
+  try {
+    
+   
+    const {error} = await supabase.from('postLikes')
+    .delete()
+    .eq('userId',userId)
+    .eq('postId',postId)
+
+    if (error) {
+      console.log("post like error (Post servive file):", error);
+      return { success: false, msg: "Could not remove like from the post" };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.log("post like error (Post servive file):", error);
+    return { success: false, msg: "Could not remove like from the post" };
+  }
+};

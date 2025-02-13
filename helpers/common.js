@@ -11,4 +11,7 @@ export const wp = precentage =>{
     return (precentage*deviceWidth)/100
 }
 
+export const  stripHtmlTags = (html) => { 
+    return html.replace(/<[^>]*>?/gm, ''); 
+};
 
