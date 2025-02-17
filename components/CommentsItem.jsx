@@ -7,8 +7,10 @@ import moment from 'moment';
 import Icon from '../assets/icons/Index';
 
 
-const CommentItem = ({ item , canDelete = true , onDelete= ()=>{}}) => {
-
+const CommentItem = ({ item , canDelete = true , onDelete= ()=>{} , highlight = false} ) => {
+console.log('====================================');
+console.log("highlight",highlight);  // but here i am not geting the commentId value , highlight is undefined here 
+console.log('====================================');
     const createdAt = moment(item?.created_at).format('MMM D');
 
       const handleDelete = () => {
@@ -30,10 +32,7 @@ const CommentItem = ({ item , canDelete = true , onDelete= ()=>{}}) => {
 
     return (
         <View style={styles.container}>
-
-
-
-            <View style={[styles.content ,{padding:10,margin:10}]}>
+            <View style={[styles.content , {padding : 8} , highlight && styles.highlight]}>
             <Avatar uri={item?.user?.image} />
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     

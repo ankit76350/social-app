@@ -21,14 +21,48 @@ const Home = () => {
 
   const [posts, setPosts] = useState([])
   const [hasMore, setHasMore] = useState(true)
+  const [notificationCount, setNotificationCount] = useState(0);
 
   const handlePostEvent = async (payload) => {
+
+
     if (payload.eventType == 'INSERT' && payload?.new?.id) {
       let newPost = { ...payload.new }
       let res = await getUserData(newPost.userId);
+      newPost.postLikes = []
+      newPost.comments = [{ count: 0 }]
       newPost.user = res.success ? res.data : {};
       setPosts(prevPosts => [newPost, ...prevPosts])
     }
+    if (payload.eventType == 'DELETE' && payload.old.id) {
+      setPosts(prevPosts => {
+        let updatedPosts = prevPosts.filter(post => post.id = !payload.old.id)
+        return updatedPosts
+      })
+    }
+
+    if (payload.eventType == 'UPDATE' && payload?.new?.id) {
+      setPosts(prevPosts => {
+        let updatedPosts = prevPosts.map(post => {
+          if (post.id == payload.new.id) {
+            post.body = payload.new.body
+            post.file = payload.new.file
+          }
+          return post
+        })
+        return updatedPosts
+      })
+    }
+
+  }
+
+  const handleNewNotification = async (payload) => {
+    console.log("got new notification: ", payload);
+    console.log("setNotificationCount", payload);
+    if (payload.eventType == 'INSERT' && payload.new.id) {
+      setNotificationCount(prev => prev + 1);
+    }
+
 
   }
 
@@ -38,10 +72,14 @@ const Home = () => {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, handlePostEvent)
       .subscribe();
 
-    // getPosts()
+    // getPosts();
+    let notificationChannel = supabase.channel('notifications')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `receiverId=eq.${user.id}` }, handleNewNotification)
+      .subscribe();
 
     return () => {
       supabase.removeChannel(postChannel)
+      supabase.removeChannel(notificationChannel)
     }
   }, [])
 
@@ -49,13 +87,13 @@ const Home = () => {
     if (!hasMore) {
       return null
     }
-    limit = limit + 4;
+    limit = limit + 10;
     console.log("fetching posts: ", limit);
 
     let res = await fetchPosts(limit);
     if (res.success) {
       if (posts.length == res.data.length) {
-        setHasMore(false) 
+        setHasMore(false)
       }
       setPosts(res.data)
     }
@@ -75,8 +113,18 @@ const Home = () => {
         <View style={styles.header}>
           <Text style={styles.title}>LinkUp</Text>
           <View style={styles.icons}>
-            <Pressable onPress={() => router.push('/Notifications')}>
+            <Pressable onPress={() => {
+              setNotificationCount(0)
+              router.push('/Notifications')
+              }}>
               <Icon name="heart" size={hp(3.2)} strokeWidth={2} color={theme.colors.text} />
+              {
+                notificationCount > 0 && (
+                  <View style={styles.pill}>
+                    <Text style={styles.pillText}>{notificationCount}</Text>
+                  </View>
+                )
+              }
             </Pressable>
             <Pressable onPress={() => router.push('/NewPost')}>
               <Icon name="plus" size={hp(3.2)} strokeWidth={2} color={theme.colors.text} />
@@ -113,7 +161,7 @@ const Home = () => {
 
             hasMore ? (<View style={{ marginVertical: posts.length == 0 ? 200 : 30 }}>
               <Loading />
-            </View>):(<View style={{marginVertical:30}}>
+            </View>) : (<View style={{ marginVertical: 30 }}>
               <Text style={styles.noPosts}>No more posts</Text>
             </View>)
           )}

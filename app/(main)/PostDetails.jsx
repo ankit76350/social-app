@@ -1,7 +1,7 @@
 import { Alert, StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { createComment, fetchPostDetails, removeComment } from '../../services/postService';
+import { createComment, fetchPostDetails, removeComment, removePost } from '../../services/postService';
 import { theme } from '../../constants/theme';
 import { hp, wp } from '../../helpers/common';
 import { useAuth } from '../../contexts/AuthContext';
@@ -12,9 +12,10 @@ import Icon from '../../assets/icons/Index';
 import CommentsItem from '../../components/CommentsItem';
 import { supabase } from '../../lib/supabase';
 import { getUserData } from '../../services/userService';
+import { createNotification } from '../../services/notificationService';
 
 const PostDetails = () => {
-    const { postId } = useLocalSearchParams();
+    const { postId, commentId } = useLocalSearchParams();
     const { user } = useAuth();
     const router = useRouter();
     const [startLoading, setStartLoading] = useState(true);
@@ -23,10 +24,8 @@ const PostDetails = () => {
     const [loading, setLoading] = useState(false);
     const [post, setPost] = useState(null);
 
-    console.log('Got post id:', postId);
 
     const handleNewComment = async (payload) => {
-        console.log('Got new comment:', payload.new);
 
         if (payload.new) {
             let newComment = { ...payload.new };
@@ -63,7 +62,6 @@ const PostDetails = () => {
         try {
             let res = await fetchPostDetails(postId);
             if (res.success) {
-                console.log('Got post details:', res);
                 setPost(res.data);
             }
             setStartLoading(false);
@@ -83,10 +81,20 @@ const PostDetails = () => {
         setLoading(true);
         let res = await createComment(data);
         setLoading(false);
-        console.log("Comment Send response (PostDetails Page)", res);
 
+      
 
         if (res.success) {
+            if (user?.id != post.userId) {
+                // send notification
+                let notify = {
+                    senderId: user.id,
+                    receiverId: post.userId,
+                    title: 'commented on your post',
+                    data: JSON.stringify({ postId: post.id, commentId: res?.data?.id })
+                }
+                createNotification(notify)
+            }
             inputRef?.current?.clear();
             commentRef.current = '';
         } else {
@@ -95,7 +103,6 @@ const PostDetails = () => {
     };
 
     const onDeleteComment = async (comment) => {
-        console.log('Deleting comment:', comment);
 
         let res = await removeComment(comment?.id);
 
@@ -109,6 +116,21 @@ const PostDetails = () => {
             Alert.alert('Comment', res.msg);
         }
     };
+
+    const onDeletePost = async () => {
+        let res = await removePost(post.id)
+        if (res.success) {
+            router.back()
+        } else {
+            Alert.alert('Post', res.msg)
+        }
+    }
+
+    const onEditPost = async (item) => {
+        router.back()
+        router.push({ pathname: '/(main)/NewPost', params: { ...item } })
+    }
+
 
     if (startLoading) {
         return (
@@ -135,6 +157,9 @@ const PostDetails = () => {
                     router={router}
                     hasShadow={false}
                     showMoreIcon={false}
+                    showDelete={true}
+                    onDelete={onDeletePost}
+                    onEdit={onEditPost}
                 />
 
                 <View style={styles.inputContainer}>
@@ -158,14 +183,16 @@ const PostDetails = () => {
                 </View>
 
                 <View style={{ marginVertical: 15, gap: 17 }}> {/* Fixed: Incorrect 'styles' -> 'style' */}
-                    {post?.comments?.map((comment) => (
-                        <CommentsItem
+                    {post?.comments?.map((comment) => {
+                    
+                        return (<CommentsItem
                             key={comment?.id?.toString()}
                             item={comment}
                             onDelete={onDeleteComment}
+                            highlight={comment.id == commentId}
                             canDelete={user.id === comment.userId || user.id === post.userId}
-                        />
-                    ))}
+                        />)
+                    })}
                     {post?.comments?.length === 0 && (
                         <Text style={{ color: theme.colors.text, marginLeft: 5 }}>
                             Be first to comment!
