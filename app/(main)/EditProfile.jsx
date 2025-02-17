@@ -56,7 +56,6 @@ const EditProfile = () => {
             quality: 0.7,
         });
 
-        console.log("result on image picker Edit Profile: ", result);
 
         if (!result.canceled) {
             setUser({ ...user, image: result.assets[0] });
@@ -71,7 +70,6 @@ const EditProfile = () => {
 
 
     const onSubmit = async () => {
-        console.log("On Sumit", "update");
         let userData = { ...user }
 
         let { name, phoneNumber, address, image, bio } = userData;
@@ -95,7 +93,6 @@ const EditProfile = () => {
 
         const res = await updateUserData(currenUser?.id, userData);
         setLoading(false)
-        console.log("Update User Result: ", res);
 
         if (res.success) {
 

@@ -59,7 +59,6 @@ const PostCard = ({
 
     const openPostDetails = () => {
         if (!showMoreIcon) return null;
-        console.log("post Details");
         router.push({ pathname: '(main)/PostDetails', params: { postId: item?.id } })
 
     }
@@ -71,7 +70,6 @@ const PostCard = ({
 
             setLikes([...updatedLikes])
             let res = await removePostLike(item?.id, currentUser?.id);
-            console.log('remove Like Res:', res);
             if (!res.success) {
                 Alert.alert('Post', 'Something went wrong')
             }
@@ -82,7 +80,6 @@ const PostCard = ({
             }
             setLikes([...likes, data])
             let res = await createPostLike(data);
-            console.log('added Like Res:', res);
             if (!res.success) {
                 Alert.alert('Post', 'Something went wrong')
             }
@@ -99,7 +96,6 @@ const PostCard = ({
             setLoading(false)
             content.url = url
         }
-        console.log('share content (from PostCard Page):', content);
         Share.share(content)
     }
 

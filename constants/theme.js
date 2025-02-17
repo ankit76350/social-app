@@ -1,15 +1,17 @@
 export const theme = {
     colors: {
         primary: '#00C26F', 
-        primaryDark: '#BAC620', 
-        dark: '#363E3E', 
+        primaryDark: '#00AC620', 
+        dark: '#3E3E3E', 
         darkLight: '#E1E1E1', 
         gray: '#e3e3e3', 
+
         text: '#494949', 
         textLight: '#7C7C7C', 
-        textDark: '#101010', 
+        textDark: '#1D1D1D', 
+
         rose: '#ef4444', 
-        roseLight: '#f67171'
+        roseLight: '#f87171'
     },
 
     fonts: { 

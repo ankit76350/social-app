@@ -57,13 +57,9 @@ const Home = () => {
   }
 
   const handleNewNotification = async (payload) => {
-    console.log("got new notification: ", payload);
-    console.log("setNotificationCount", payload);
     if (payload.eventType == 'INSERT' && payload.new.id) {
       setNotificationCount(prev => prev + 1);
     }
-
-
   }
 
 
@@ -88,7 +84,6 @@ const Home = () => {
       return null
     }
     limit = limit + 10;
-    console.log("fetching posts: ", limit);
 
     let res = await fetchPosts(limit);
     if (res.success) {
@@ -97,9 +92,6 @@ const Home = () => {
       }
       setPosts(res.data)
     }
-
-    // console.log("Ankit Kumar Post",res);
-    // console.log("Ankit Kumar Post User",res.data[0].user);
 
   }
 

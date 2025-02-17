@@ -8,9 +8,7 @@ import Icon from '../assets/icons/Index';
 
 
 const CommentItem = ({ item , canDelete = true , onDelete= ()=>{} , highlight = false} ) => {
-console.log('====================================');
-console.log("highlight",highlight);  // but here i am not geting the commentId value , highlight is undefined here 
-console.log('====================================');
+
     const createdAt = moment(item?.created_at).format('MMM D');
 
       const handleDelete = () => {

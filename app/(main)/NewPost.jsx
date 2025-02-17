@@ -18,7 +18,6 @@ import { createOrUpdatePost } from '../../services/postService'
 const NewPost = () => {
 
     const post = useLocalSearchParams();
-    console.log('posts: ', post);
 
     const { user } = useAuth()
     const bodyRef = useRef("")
@@ -54,7 +53,6 @@ const NewPost = () => {
 
         let result = await ImagePicker.launchImageLibraryAsync(mediaConfig); // Fixed incorrect function syntax
 
-        console.log("file type (NewPost Page): ", result.assets[0]);
 
         if (!result.canceled) {
             setFile(result.assets[0]); // Ensure setFile is correctly handling assets
@@ -113,7 +111,6 @@ const NewPost = () => {
         setLoading(true)
         let res = await createOrUpdatePost(data)
         setLoading(false)
-        console.log('New Post Res (New Post Page):', res);
         if (res.success) {
             setFile(null);
             bodyRef.current = '',
@@ -127,9 +124,6 @@ const NewPost = () => {
     }
 
 
-
-
-    console.log('file uri: ', getFileUri(file));
     return (
         <ScreenWrapper bg={"white"}>
             <View style={styles.container}>

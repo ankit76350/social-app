@@ -13,58 +13,56 @@ LogBox.ignoreLogs([
 const _layout = () => {
   return (
     <AuthProvider>
-    
-    <MainLayout/>
+
+      <MainLayout />
     </AuthProvider>
   )
 }
 const MainLayout = () => {
-  const {setAuth , setUserData} = useAuth()
+  const { setAuth, setUserData } = useAuth()
   const router = useRouter()
-  useEffect(()=>{
+  useEffect(() => {
 
     supabase.auth.onAuthStateChange((_event, session) => {
-      console.log('session log: ',session?.user?.id)
+      console.log('session log: ', session?.user?.id)
 
       if (session) {
         setAuth(session?.user)
-        updateUserData(session?.user , session?.user?.email)
-   
-        
+        updateUserData(session?.user, session?.user?.email)
+
+
         router.replace('/Home')
-        
-      }else{
+
+      } else {
         setAuth(null)
         router.replace('/Welcome')
       }
     })
 
 
-  },[])
+  }, [])
 
-  const updateUserData =  async (user, email) =>{
+  const updateUserData = async (user, email) => {
     let res = await getUserData(user?.id);
     if (res.success) {
-      setUserData({...res.data, email })
+      setUserData({ ...res.data, email })
     }
     console.log('got user data(_layout page): ', res)
   }
-   
+
   return (
-   <Stack
-   screenOptions={{
-    headerShown:false
-   }}
-   >
-   <Stack.Screen
-   name='(main)/PostDetails'
-   options={{
-    presentation: 'modal'
-   }}
-   />
-
-
-   </Stack>
+    <Stack
+      screenOptions={{
+        headerShown: false
+      }}
+    >
+      <Stack.Screen
+        name='(main)/PostDetails'
+        options={{
+          presentation: 'modal'
+        }}
+      />
+    </Stack>
   )
 }
 

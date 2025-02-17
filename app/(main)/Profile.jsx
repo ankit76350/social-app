@@ -32,7 +32,6 @@ const Profile = () => {
     }
 
     const getPosts = async () => {
-        console.log("fetching posts: ", limit);
         if (!hasMore) {
             return null
         }
@@ -45,9 +44,6 @@ const Profile = () => {
             }
             setPosts(res.data)
         }
-
-        // console.log("Ankit Kumar Post",res);
-        // console.log("Ankit Kumar Post User",res.data[0].user);
 
     }
 
