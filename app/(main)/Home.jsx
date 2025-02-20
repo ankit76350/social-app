@@ -13,6 +13,7 @@ import { fetchPosts } from '../../services/postService'
 import PostCard from '../../components/PostCard'
 import Loading from '../../components/Loading'
 import { getUserData } from '../../services/userService'
+import Story  from './story'
 
 let limit = 0;
 const Home = () => {
@@ -103,12 +104,13 @@ const Home = () => {
 
 
         <View style={styles.header}>
+
           <Text style={styles.title}>LinkUp</Text>
           <View style={styles.icons}>
             <Pressable onPress={() => {
               setNotificationCount(0)
               router.push('/Notifications')
-              }}>
+            }}>
               <Icon name="heart" size={hp(3.2)} strokeWidth={2} color={theme.colors.text} />
               {
                 notificationCount > 0 && (
@@ -125,12 +127,20 @@ const Home = () => {
               <Avatar uri={user?.image} size={hp(4.3)}
                 rounded={theme.radius.sm}
                 style={{ borderWidth: 2 }}
-              />
+                />
               {/* <Icon name="user" size={hp(3.2)} strokeWidth={2} color={theme.colors.text} /> */}
             </Pressable>
           </View>
-        </View>
 
+        </View>
+        {/* </View> */}
+
+
+        {/*  s*/}
+        <Story/>
+
+
+        {/* <View style={styles.container}> */}
         <FlatList
           data={posts}
           shows VerticalScrollIndicator={false}
@@ -177,6 +187,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    // backgroundColor:'grey',
     marginBottom: 10,
     marginHorizontal: wp(4),
   },
