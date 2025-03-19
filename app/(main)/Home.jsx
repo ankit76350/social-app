@@ -14,6 +14,7 @@ import PostCard from '../../components/PostCard'
 import Loading from '../../components/Loading'
 import { getUserData } from '../../services/userService'
 import Story  from './story'
+import StoryViewer from '../../components/StoryViewer'
 
 let limit = 0;
 const Home = () => {
@@ -98,6 +99,7 @@ const Home = () => {
 
   return (
     <ScreenWrapper bg="white">
+      
       <View style={styles.container}>
 
         {/* Header style={styles.container}*/}
@@ -240,3 +242,20 @@ const styles = StyleSheet.create({
 
 })
 
+
+
+// import { StyleSheet, Text, View } from 'react-native'
+// import React from 'react'
+// import StoryViewer from '../../components/StoryViewer'
+
+// const Home = () => {
+//   return (
+//     <View>
+//    <StoryViewer/>
+//     </View>
+//   )
+// }
+
+// export default Home
+
+// const styles = StyleSheet.create({})

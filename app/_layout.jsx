@@ -10,14 +10,16 @@ LogBox.ignoreLogs([
   'Warning: MemoizedTNodeRenderer: Support for defaultProps will be removed from memo components',
   'Warning: TNodeChildrenRenderer: Support for defaultProps will be removed from memo components'
 ]);
+
 const _layout = () => {
   return (
     <AuthProvider>
-
       <MainLayout />
     </AuthProvider>
   )
 }
+
+
 const MainLayout = () => {
   const { setAuth, setUserData } = useAuth()
   const router = useRouter()
